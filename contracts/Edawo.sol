@@ -56,5 +56,20 @@ contract Edawo {
         emit Events.Donated(_campaignId, msg.sender, msg.value);
     }
 
+    function ClaimDonations(uint256 _campaignId) external  {
+        require(_campaignId > 0 && _campaignId <= campaignCount, "Invalid Campaign Id");
+        Campaign storage campaign = campaigns[_campaignId];
+        require(campaign.creator == msg.sender, "you dont have the required access to this campaign");
+        require(campaign.isGoalReached, "You can only withdraw when goal is reached");
+        require(campaign.deadline < block.timestamp, "You cant withdraw donations before deadline");
+        
+        uint amountToWithdraw = campaign.raised;
+        campaign.raised = 0;
+
+       payable(campaign.creator).transfer(amountToWithdraw);
+
+       emit Events.Withdrawn(_campaignId, campaign.creator, amountToWithdraw);
+    }
+
 
 }
