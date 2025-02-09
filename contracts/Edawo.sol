@@ -40,5 +40,21 @@ contract Edawo {
         emit Events.CampaignCreated(campaignCount, msg.sender ,_goal, _title, deadline);
     }
 
+    function donateToACampaign(uint256 _campaignId) external payable {
+        require(_campaignId > 0 && _campaignId <= campaignCount, "Invalid campaign id");
+        require(campaigns[_campaignId].deadline > block.timestamp, "This campaign has ended");
+        require(msg.value > 0, "Donation must be above 0");
+
+        Campaign storage campaign = campaigns[_campaignId];
+        campaign.raised += msg.value;
+        campaign.donors[msg.sender] += msg.value;
+
+        if(campaign.raised >= campaign.goal) {
+            campaign.isGoalReached = true;
+        }
+
+        emit Events.Donated(_campaignId, msg.sender, msg.value);
+    }
+
 
 }
