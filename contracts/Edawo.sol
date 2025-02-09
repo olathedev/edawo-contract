@@ -71,5 +71,33 @@ contract Edawo {
        emit Events.Withdrawn(_campaignId, campaign.creator, amountToWithdraw);
     }
 
+    struct CampaignDetails {
+        string title;
+        address creator;
+        uint256 goal;
+        uint256 raised;
+        uint256 deadline;
+        bool isGoalReached;
+    }
+
+    function getCampaignDetails(uint256 _campaignId) external view returns (
+        string memory title,
+        address creator,
+        uint256 goal,
+        uint256 raised,
+        uint256 deadline,
+        bool isGoalReached
+        ) {
+        require(_campaignId > 0 && _campaignId <= campaignCount, "Invalid Campaign Id");
+        Campaign storage campaign = campaigns[_campaignId];
+        return (
+            campaign.title,
+            campaign.creator,
+            campaign.goal,
+            campaign.raised,
+            campaign.deadline,
+            campaign.isGoalReached
+        );
+    }
 
 }
